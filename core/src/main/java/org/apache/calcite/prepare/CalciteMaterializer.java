@@ -25,6 +25,7 @@ import org.apache.calcite.plan.RelOptPlanner;
 import org.apache.calcite.plan.RelOptTable;
 import org.apache.calcite.plan.RelOptUtil;
 import org.apache.calcite.rel.RelNode;
+import org.apache.calcite.rel.RelRoot;
 import org.apache.calcite.rel.RelShuttle;
 import org.apache.calcite.rel.core.TableFunctionScan;
 import org.apache.calcite.rel.core.TableScan;
@@ -42,6 +43,7 @@ import org.apache.calcite.rel.logical.LogicalValues;
 import org.apache.calcite.schema.Schemas;
 import org.apache.calcite.schema.Table;
 import org.apache.calcite.schema.impl.StarTable;
+import org.apache.calcite.sql.SqlKind;
 import org.apache.calcite.sql.SqlNode;
 import org.apache.calcite.sql.parser.SqlParseException;
 import org.apache.calcite.sql.parser.SqlParser;
@@ -82,8 +84,16 @@ class CalciteMaterializer extends CalcitePrepareImpl.CalcitePreparingStmt {
     SqlToRelConverter sqlToRelConverter2 =
         getSqlToRelConverter(getSqlValidator(), catalogReader, config);
 
-    materialization.queryRel =
-        sqlToRelConverter2.convertQuery(node, true, true).rel;
+    //add by Hao: trim here to pass the view matching
+    RelRoot root = sqlToRelConverter2.convertQuery(node, true, true);
+    materialization.queryRel = root.rel;
+
+    final boolean ordered = !root.collation.getFieldCollations().isEmpty();
+    final boolean dml = SqlKind.DML.contains(root.kind);
+
+    materialization.queryRel =  sqlToRelConverter2.trimUnusedFields(dml || ordered, materialization.queryRel);
+
+
 
     // Identify and substitute a StarTable in queryRel.
     //

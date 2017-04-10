@@ -151,7 +151,10 @@ public class Driver extends UnregisteredDriver {
                   entry.getValue());
             }
           }
+          System.out.println(json.toJsonString(root));
           return "inline:" + json.toJsonString(root);
+
+
         }
         return null;
       }

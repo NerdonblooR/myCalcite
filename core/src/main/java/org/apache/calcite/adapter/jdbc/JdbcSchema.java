@@ -151,7 +151,9 @@ public class JdbcSchema implements Schema {
   }
 
   public boolean isMutable() {
-    return false;
+    //return false;
+    //TODO: comment out by Hao Tan
+    return true;
   }
 
   public boolean contentsHaveChangedSince(long lastCheck, long now) {

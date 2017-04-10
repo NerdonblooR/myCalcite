@@ -91,7 +91,7 @@ public class MaterializedViewFilterScanRule extends RelOptRule {
           List<RelNode> subs = new MaterializedViewSubstitutionVisitor(target, root)
               .go(materialization.tableRel);
           for (RelNode s : subs) {
-            call.transformTo(s);
+            call.transformTo(s); //why not stopping here
           }
         }
       }

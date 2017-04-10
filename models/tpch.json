@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "defaultSchema": "tpch",
+  "schemas": [
+    {
+      "type": "custom",
+      "name": "tpch",
+      "factory": "org.apache.calcite.adapter.jdbc.JdbcSchema$Factory",
+      "operand": {
+        "jdbcUser": "root",
+        "jdbcUrl": "jdbc:mysql://localhost:3306/tpch"
+      },
+      "materializations": [
+        {
+          "table": "mv_test",
+          "sql": "select o_shippriority from customer, orders where c_custkey = o_custkey and C_CUSTKEY < 200"
+        }
+      ]
+    }
+  ]
+
+}
+
+
+
+
+
